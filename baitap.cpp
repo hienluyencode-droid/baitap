@@ -6,7 +6,6 @@
 using namespace std;
 const int maxn = 1e5 + 1;
 int n, q;
-
 int count_for_max[maxn], count_for_min[maxn];
 int stmax[4 * maxn], stmin[4 * maxn];
 //-------------------for case 1 and 5-------
