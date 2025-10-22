@@ -3,141 +3,43 @@
 #define fi first
 #define se second
 #define fastio ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+#define fname "baitap"
 using namespace std;
 
-const int maxn = 1e5;
-const int inf = 1e9;
-int count_for_max[maxn + 1], count_for_min[maxn + 1];
-int stmax[4 * maxn + 1], stmin[4 * maxn + 1];
-
-void build_max_tree(int id, int l, int r) {
-    if(l == r) {
-        stmax[id] = count_for_max[l];
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    build_max_tree(2 * id, l, mid);
-    build_max_tree(2 * id + 1, mid + 1, r);
-
-    stmax[id] = max(stmax[2 * id + 1], stmax[2 * id]);
-}
-void build_min_tree(int id, int l, int r) {
-    if(l == r) {
-        stmin[id] = count_for_min[l];
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    build_min_tree(2 * id, l, mid);
-    build_min_tree(2 * id + 1, mid + 1, r);
-
-    stmin[id] = min(stmin[2 * id + 1], stmin[2 * id]);
-}
-void update_max(int id, int l, int r, int i, int val) {
-    if(l > i || r < i) return;
-
-    if(l == r) {
-        stmax[id] = val;
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    update_max(2 * id, l, mid, i, val);
-    update_max(2 * id + 1, mid + 1, r, i, val);
-
-    stmax[id] = max(stmax[2 * id + 1], stmax[2 * id]);
-}
-void update_min(int id, int l, int r, int i, int val) {
-    if(l > i || r < i) return;
-
-    if(l == r) {
-        stmin[id] = val;
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    update_min(2 * id, l, mid, i, val);
-    update_min(2 * id + 1, mid + 1, r, i, val);
-
-    stmin[id] = min(stmin[2 * id + 1], stmin[2 * id]);
-}
-int getmax(int id, int l, int r, int u, int v) {
-    if(v < l || u > r) return 0;
-    if(u <= l && r <= v) return stmax[id];
-    int mid = (l + r) >> 1;
-    return max(getmax(2 * id, l, mid, u, v), getmax(2 * id + 1, mid + 1, r, u, v));
-}
-int getmin(int id, int l, int r, int u, int v) {
-    if(v < l || u > r) return inf;
-    if(u <= l && r <= v) return stmin[id];
-    int mid = (l + r) >> 1;
-    return min(getmin(2 * id, l, mid, u, v), getmin(2 * id + 1, mid + 1, r, u, v));
-}
-void case1(int x) {
-    count_for_max[x] = x;
-    count_for_min[x] = x;
-    update_max(1, 1, maxn, x, x);
-    update_min(1, 1, maxn, x, x);
-}
-void case2(int x) {
-    count_for_max[x] = 0;
-    count_for_min[x] = inf;
-    update_max(1, 1, maxn, x, 0);
-    update_min(1, 1, maxn, x, inf);
-}
-void case3(int x) {
-    int ans = getmin(1, 1, maxn, x + 1, maxn);
-    if(ans == inf) cout << "No\n";
-    else cout << ans << "\n";
-}
-void case4(int x) {
-    int ans = getmax(1, 1, maxn, 1, x - 1);
-    if(ans == 0) cout << "No\n";
-    else cout << ans << "\n";
-}
 int main() {
     fastio
-    freopen("baitap.inp", "r", stdin);
-    freopen("baitap.out", "w", stdout);
+    freopen(fname".inp", "r", stdin);
+    freopen(fname".out", "w", stdout);
     clog <<"LOVE M.NG SO MUCHHHHHHHHHHHHHHHHHHHH" << endl;  
     
-    memset(count_for_max, 0, sizeof(count_for_max));
-    for(int i = 0; i <= maxn; i++)
-        count_for_min[i] = inf;
+    int n, m; cin >>  n >> m;
+    int a[n + 1][m + 1];
+    for(int i = 1; i <= n; i++)
+        for(int j = 1; j <= m; j++) cin >> a[i][j];
     
-    int n; cin >> n;
-    for(int i = 0; i < n; i++) {
-        int x; cin >> x;
-        count_for_max[x] = x;
-        count_for_min[x] = x;
+    int pr[n + 1][m + 1];
+    for(int i = 0; i <= n; i++) pr[i][0] = 0;
+    for(int i = 0; i <= m; i++) pr[0][i] = 0;
+    for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= m; j++)
+            pr[i][j] = pr[i - 1][j] + pr[i][j - 1] - pr[i - 1][j - 1] + a[i][j];
     }
-    int q; cin >> q;
-    
-    build_max_tree(1, 1,maxn);
-    build_min_tree(1, 1, maxn);
-    while(q--) {
-        int t, x; cin >> t;
-        if(t == 5) {
-            cout << stmin[1] << " " << stmax[1] << "\n";
-        }
-        else {
-            cin >> x;
-            switch (t){
-            case 1:
-                case1(x);
-                break;
-            case 2:
-                case2(x);
-                break;
-            case 3:
-                case3(x);
-                break;
-            default:
-                case4(x);
-                break;
-            }
-        }
-    }
+
+    int ans = INT_MIN, h1, h2, c1, c2;
+    for(int i = 1; i <= n; i++)
+        for(int j = i; j <= n; j++)
+            for(int x = 1; x <= m; x++)
+                for(int y = x; y <= m; y++) {
+                    int t = pr[j][y] - pr[i - 1][y] - pr[j][x - 1] + pr[i - 1][x - 1];
+                        if(t > ans) {
+                            ans = t;
+                            h1 = i;
+                            h2 = j;
+                            c1 = x;
+                            c2 = y;
+                        }
+                }
+    cout << ans << "\n";
+    cout << h1 << " " << h2 << " " << c1 << " " << c2; 
     return 0;
 }
