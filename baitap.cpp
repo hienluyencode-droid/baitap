@@ -5,41 +5,96 @@
 #define fastio ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 #define fname "baitap"
 using namespace std;
-
+void print(int a[][101], int n) {
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) cout << a[i][j] << " ";            
+        cout << "\n";
+    }
+}
+void A(int n) {
+    if(n < 2) {
+        cout << n << "\n";
+        return;
+    }
+    int ans = 1, a[n + 1][101];
+        for(int i = 0; i < n; i++) {
+            if(i & 1) {
+                for(int j = n - 1; j >= 0; j--) {
+                    a[i][j] = ans;
+                    ans++;
+                }
+            }
+            else {
+                for(int j = 0; j < n; j++) {
+                    a[i][j] = ans;
+                    ans++;
+                }
+            }
+        }
+    print(a, n);
+}
+void B(int n) {
+    if(n < 2) {
+        cout << n << "\n";
+        return;
+    }
+    int ans = n * n, a[n + 1][101];
+    for(int j = 0; j < n; j++) {
+        if(j & 1) {
+            for(int i = n - 1; i >= 0; i--) {
+                a[i][j] = ans;
+                ans--;
+            }
+        }
+        else {
+            for(int i = 0; i < n; i++) {
+                a[i][j] = ans;
+                ans--;
+            }
+        }
+    }
+    print(a, n);
+}
+void C(int n) {
+    if(n < 2) {
+        cout << n << "\n";
+        return;
+    }
+    int h1 = 0, h2 = n - 1, c1 = 0, c2 = n - 1;
+    int a[n + 1][101], ans = 1;
+    while(h1 <= h2 && c1 <= c2) {
+        for(int i = c1; i <= c2; i++) {
+            a[h1][i] = ans;
+            ans++;
+        }
+        h1++;
+        for(int i = h1; i <= h2; i++) {
+            a[i][c2] = ans;
+            ans++;
+        }
+        c2--;
+        for(int i = c2; i >= c1; i--) {
+            a[h2][i] = ans;
+            ans++;
+        }
+        h2--;
+        for(int i = h2; i >= h1; i--) {
+            a[i][c1] = ans;
+            ans++;
+        }
+        c1++;
+    }
+    print(a, n);
+}
 int main() {
     fastio
     freopen(fname".inp", "r", stdin);
     freopen(fname".out", "w", stdout);
     clog <<"LOVE M.NG SO MUCHHHHHHHHHHHHHHHHHHHH" << endl;  
     
-    int n, m; cin >>  n >> m;
-    int a[n + 1][m + 1];
-    for(int i = 1; i <= n; i++)
-        for(int j = 1; j <= m; j++) cin >> a[i][j];
-    
-    int pr[n + 1][m + 1];
-    for(int i = 0; i <= n; i++) pr[i][0] = 0;
-    for(int i = 0; i <= m; i++) pr[0][i] = 0;
-    for(int i = 1; i <= n; i++) {
-        for(int j = 1; j <= m; j++)
-            pr[i][j] = pr[i - 1][j] + pr[i][j - 1] - pr[i - 1][j - 1] + a[i][j];
-    }
-
-    int ans = INT_MIN, h1, h2, c1, c2;
-    for(int i = 1; i <= n; i++)
-        for(int j = i; j <= n; j++)
-            for(int x = 1; x <= m; x++)
-                for(int y = x; y <= m; y++) {
-                    int t = pr[j][y] - pr[i - 1][y] - pr[j][x - 1] + pr[i - 1][x - 1];
-                        if(t > ans) {
-                            ans = t;
-                            h1 = i;
-                            h2 = j;
-                            c1 = x;
-                            c2 = y;
-                        }
-                }
-    cout << ans << "\n";
-    cout << h1 << " " << h2 << " " << c1 << " " << c2; 
+    int n; cin >> n;
+    A(n);
+    B(n);
+    C(n);
     return 0;
 }
