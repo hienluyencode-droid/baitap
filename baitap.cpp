@@ -55,6 +55,31 @@ void B(int n) {
     }
     print(a, n);
 }
+void D(int n) {
+    if(n < 2) {
+        cout << n << "\n";
+        return;
+    }
+    int a[n + 1][101];
+    int cur = 1;
+    for (int s = 0; s <= 2*(n-1); ++s) {
+        int i_min = max(0, s - (n-1));
+        int i_max = min(n-1, s);
+        if (s % 2 == 0) {
+            for (int i = i_max; i >= i_min; --i) {
+                int j = s - i;
+                a[i][j] = cur++;
+            }
+        }
+        else {
+            for (int i = i_min; i <= i_max; ++i) {
+                int j = s - i;
+                a[i][j] = cur++;
+            }
+        }
+    }
+    print(a, n);
+}
 void C(int n) {
     if(n < 2) {
         cout << n << "\n";
@@ -96,5 +121,6 @@ int main() {
     A(n);
     B(n);
     C(n);
+    D(n);
     return 0;
 }
